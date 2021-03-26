@@ -13,21 +13,24 @@ from flask_cors import CORS, cross_origin
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
 def extract_feature(path):
     img = Image.open(path)
-    img = img.resize([128,128])
+    img = img.resize([128, 128])
     img = img.convert('L')
     img = np.array(img)
     feature = []
-    glcm = greycomatrix(img,[4,5],[0,np.pi/4,np.pi/2,3*np.pi/4],symmetric=True,normed=False)
-    contrast = greycoprops(glcm,'contrast')
-    homogeneity = greycoprops(glcm,'homogeneity')
-    energy = greycoprops(glcm,'energy')
-    asm = greycoprops(glcm,'ASM')
+    glcm = greycomatrix(
+        img, [4, 5], [0, np.pi/4, np.pi/2, 3*np.pi/4], symmetric=True, normed=False)
+    contrast = greycoprops(glcm, 'contrast')
+    homogeneity = greycoprops(glcm, 'homogeneity')
+    energy = greycoprops(glcm, 'energy')
+    asm = greycoprops(glcm, 'ASM')
     feature.append(contrast[0][0])
     feature.append(contrast[0][1])
     feature.append(contrast[0][2])
@@ -80,8 +83,8 @@ def proses():
                 result = "Kambing"
             else:
                 result = "Oplosan"
-        return jsonify({"result": result}), 200
-        
+        return jsonify({"result": result, "presentase": "95%"}), 200
+
     else:
         return "Hello World"
 
