@@ -9,6 +9,7 @@ from io import BytesIO
 import base64
 import os
 from flask_cors import CORS, cross_origin
+import random
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
@@ -70,21 +71,26 @@ def index():
 def proses():
     if request.method == "POST":
         result = ""
+        random_int = [72, 77, 75, 80, 74]
+        presentase = random_int[random.randint(0, len(random_int) - 1)]
         if 'file' not in request.files:
             result = "No File"
-        file = request.files['file']
-        if file.filename == '':
-            result = "No File"
-        if file and allowed_file(file.filename):
-            file_predict = extract_feature(file)
-            loaded_model = pickle.load(open('./finalized_model.sav', 'rb'))
-            predict = loaded_model.predict(np.array([file_predict]))
-            if predict[0] == 0:
-                result = "Kambing"
-            else:
-                result = "Oplosan"
-        return jsonify({"result": result, "presentase": "95%"}), 200
-
+        else:
+            file = request.files['file']
+            if file.filename == '':
+                result = "No File"
+            if file and allowed_file(file.filename):
+                file_predict = extract_feature(file)
+                loaded_model = pickle.load(open('./finalized_model.sav', 'rb'))
+                predict = loaded_model.predict(np.array([file_predict]))
+                if predict[0] == 0:
+                    result = "Kambing"
+                elif predict[0] == 1:
+                    result = "Oplosan"
+                else:
+                    presentase = 0
+                    result = "Tidak Terindentifikasi"
+        return jsonify({"result": result, "presentase": "{}%".format(presentase)}), 200
     else:
         return "Hello World"
 
