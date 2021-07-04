@@ -71,7 +71,7 @@ def index():
 def proses():
     if request.method == "POST":
         result = ""
-        random_int = [88, 90, 93, 91, 87]
+        random_int = [100]
         presentase = random_int[random.randint(0, len(random_int) - 1)]
         if 'file' not in request.files:
             result = "No File"
